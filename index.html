@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesa de Partes Digital - Municipalidad de Lima Norte</title>
+    <style>
+        :root {
+            --primary: #1b4332;
+            --secondary: #2d6a4f;
+            --accent: #52b788;
+            --bg: #f4f6f8;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --danger: #d90429;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        header h1 { margin: 0; font-size: 24px; }
+        header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            background-color: #e2e8f0;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .nav-btn.active, .nav-btn:hover {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .hidden { display: none; }
+
+        form {
+            display: grid;
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        label { font-weight: 600; font-size: 14px; }
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        button.submit-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.submit-btn:hover { background-color: var(--secondary); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        th { background-color: #f8fafc; color: var(--primary); }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge.PENDIENTE { background-color: #fef08a; color: #854d0e; }
+        .badge.APROBADO { background-color: #dcfce7; color: #166534; }
+        .badge.RECHAZADO { background-color: #fee2e2; color: #991b1b; }
+        .badge.REVISIÓN { background-color: #e0f2fe; color: #0369a1; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stat-box h3 { margin: 0; font-size: 28px; color: var(--primary); }
+        .stat-box p { margin: 5px 0 0; color: #64748b; font-size: 14px; }
+        .actions-bar { display: flex; gap: 10px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🏛️ Municipalidad de Lima Norte</h1>
+        <p>Sistema Web de Mesa de Partes Digital</p>
+    </header>
+
+    <!-- Menú de Navegación -->
+    <div class="nav-tabs">
+        <button class="nav-btn active" onclick="switchTab('tab-registrar')">📝 Registrar Expediente</button>
+        <button class="nav-btn" onclick="switchTab('tab-listar')">📋 Listar y Consultar</button>
+        <button class="nav-btn" onclick="switchTab('tab-estadisticas')">📊 Estadísticas</button>
+    </div>
+
+    <!-- SECCIÓN 1: REGISTRAR EXPEDIENTE -->
+    <div id="tab-registrar" class="card">
+        <h2>Registrar Nuevo Expediente</h2>
+        <form id="form-expediente" onsubmit="registrarExpediente(event)">
+            <div class="form-group">
+                <label>DNI (8 dígitos) o RUC (11 dígitos):</label>
+                <input type="text" id="documento" required placeholder="Ej. 74839201 o 20601234567">
+            </div>
+            <div class="form-group">
+                <label>Nombre Completo o Razón Social:</label>
+                <input type="text" id="remitente" required placeholder="Ej. Juan Pérez / Empresa S.A.C.">
+            </div>
+            <div class="form-group">
+                <label>Tipo de Trámite:</label>
+                <select id="tipo">
+                    <option value="Licencia de Funcionamiento">Licencia de Funcionamiento</option>
+                    <option value="Reclamo">Reclamo / Queja</option>
+                    <option value="Solicitud de Obras">Solicitud de Obras</option>
+                    <option value="Constancia de Posesión">Constancia de Posesión</option>
+                    <option value="General">Otro / General</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Área de Destino (Derivación):</label>
+                <select id="area">
+                    <option value="Gerencia de Rentas">Gerencia de Rentas</option>
+                    <option value="Obras Públicas">Obras Públicas</option>
+                    <option value="Secretaría General">Secretaría General</option>
+                    <option value="Desarrollo Social">Desarrollo Social</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Asunto / Detalle:</label>
+                <textarea id="asunto" rows="3" required placeholder="Describa el motivo del trámite..."></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Generar Expediente y Ticket</button>
+        </form>
+    </div>
+
+    <!-- SECCIÓN 2: LISTAR Y BUSCAR -->
+    <div id="tab-listar" class="card hidden">
+        <h2>Listado y Búsqueda de Expedientes</h2>
+        <div class="actions-bar">
+            <input type="text" id="buscador" onkeyup="filtrarExpedientes()" placeholder="Buscar por código, DNI o remitente..." style="flex: 1;">
+            <button onclick="exportarCSV()" class="nav-btn" style="background-color: var(--primary); color: white;">📥 Exportar CSV</button>
+        </div>
+        <div style="overflow-x: auto;">
+            <table id="tabla-expedientes">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Remitente</th>
+                        <th>Área</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-body">
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 3: ESTADÍSTICAS -->
+    <div id="tab-estadisticas" class="card hidden">
+        <h2>Panel Estadístico del Sistema</h2>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3 id="stat-total">0</h3>
+                <p>Total Registrados</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="stat-pendientes">0</h3>
+                <p>Pendientes</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="stat-aprobados">0</h3>
+                <p>Aprobados</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="stat-rechazados">0</h3>
+                <p>Rechazados</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Cargar datos guardados en el navegador (memoria persistente)
+    let expedientes = JSON.parse(localStorage.getItem("expedientes_mesa")) || [];
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.remove('hidden');
+        event.currentTarget.classList.add('active');
+        if(tabId === 'tab-listar') renderTabla();
+        if(tabId === 'tab-estadisticas') actualizarEstadisticas();
+    }
+
+    function registrarExpediente(e) {
+        e.preventDefault();
+        const doc = document.getElementById('documento').value.trim();
+        
+        // Validación estricta DNI (8) o RUC (11)
+        if (!/^\d{8}$/.test(doc) && !/^\d{11}$/.test(doc)) {
+            alert("Error: El documento debe ser un DNI válido de 8 dígitos o un RUC de 11 dígitos numéricos.");
+            return;
+        }
+
+        const numCorrelativo = expedientes.length + 1;
+        const codigo = `EXP-2026-${String(numCorrelativo).padStart(4, '0')}`;
+        const now = new Date();
+        const fecha = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        const nuevo = {
+            codigo,
+            documento: doc,
+            remitente: document.getElementById('remitente').value.trim(),
+            tipo: document.getElementById('tipo').value,
+            area: document.getElementById('area').value,
+            asunto: document.getElementById('asunto').value.trim(),
+            fecha,
+            estado: "PENDIENTE",
+            observaciones: "Ninguna"
+        };
+
+        expedientes.push(nuevo);
+        localStorage.setItem("expedientes_mesa", JSON.stringify(expedientes));
+        
+        alert(`¡Expediente registrado con éxito!\nCódigo asignado: ${codigo}`);
+        document.getElementById('form-expediente').reset();
+        switchTab('tab-listar');
+    }
+
+    function renderTabla(datos = expedientes) {
+        const tbody = document.getElementById('lista-body');
+        tbody.innerHTML = '';
+        if (datos.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#64748b;">No hay expedientes registrados.</td></tr>`;
+            return;
+        }
+
+        datos.forEach((exp, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${exp.codigo}</strong></td>
+                    <td>${exp.fecha}</td>
+                    <td>${exp.tipo}</td>
+                    <td>${exp.remitente}<br><small style="color:#64748b;">Doc: ${exp.documento}</small></td>
+                    <td>${exp.area}</td>
+                    <td><span class="badge ${exp.estado}">${exp.estado}</span></td>
+                    <td>
+                        <button onclick="cambiarEstado('${exp.codigo}')" title="Cambiar Estado" style="cursor:pointer; background:none; border:none; font-size:16px;">⚙️</button>
+                        <button onclick="eliminar('${exp.codigo}')" title="Eliminar" style="cursor:pointer; background:none; border:none; font-size:16px;">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function filtrarExpedientes() {
+        const query = document.getElementById('buscador').value.toLowerCase();
+        const filtrados = expedientes.filter(e => 
+            e.codigo.toLowerCase().includes(query) || 
+            e.documento.includes(query) || 
+            e.remitente.toLowerCase().includes(query)
+        );
+        renderTabla(filtrados);
+    }
+
+    function cambiarEstado(codigo) {
+        const exp = expedientes.find(e => e.codigo === codigo);
+        if(!exp) return;
+        const nuevoEstado = prompt("Seleccione nuevo estado:\n1. PENDIENTE\n2. EN REVISIÓN\n3. APROBADO\n4. RECHAZADO", "PENDIENTE");
+        const mapa = {"1": "PENDIENTE", "2": "EN REVISIÓN", "3": "APROBADO", "4": "RECHAZADO"};
+        if(mapa[nuevoEstado]) {
+            exp.estado = mapa[nuevoEstado];
+            localStorage.setItem("expedientes_mesa", JSON.stringify(expedientes));
+            renderTabla();
+        }
+    }
+
+    function eliminar(codigo) {
+        if(confirm(`¿Está seguro de eliminar el expediente ${codigo}?`)) {
+            expedientes = expedientes.filter(e => e.codigo !== codigo);
+            localStorage.setItem("expedientes_mesa", JSON.stringify(expedientes));
+            renderTabla();
+        }
+    }
+
+    function actualizarEstadisticas() {
+        document.getElementById('stat-total').innerText = expedientes.length;
+        document.getElementById('stat-pendientes').innerText = expedientes.filter(e => e.estado === 'PENDIENTE').length;
+        document.getElementById('stat-aprobados').innerText = expedientes.filter(e => e.estado === 'APROBADO').length;
+        document.getElementById('stat-rechazados').innerText = expedientes.filter(e => e.estado === 'RECHAZADO').length;
+    }
+
+    function exportarCSV() {
+        if(expedientes.length === 0) { alert("No hay datos para exportar."); return; }
+        let csv = "Codigo,Fecha,Tipo,Area,Documento,Remitente,Asunto,Estado\n";
+        expedientes.forEach(e => {
+            csv += `${e.codigo},${e.fecha},${e.tipo},${e.area},${e.documento},"${e.remitente}","${e.asunto}",${e.estado}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "reporte_expedientes.csv";
+        link.click();
+    }
+</script>
+
+</body>
+</html>
