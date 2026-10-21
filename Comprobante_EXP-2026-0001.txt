@@ -1,0 +1,15 @@
+========================================
+   MUNICIPALIDAD DE LIMA NORTE - TICKET
+      COMPROBANTE DE MESA DE PARTES
+========================================
+CÓDIGO      : EXP-2026-0001
+FECHA/HORA  : 21/10/2026 18:21
+TIPO TRÁMITE: Reclamo
+ÁREA DESTINO: Obras Públicas
+DNI/RUC     : 61931895
+REMITENTE   : sebastian leonardo marcas montufar
+ASUNTO      : el estado final de las pistas
+ESTADO      : PENDIENTE
+OBSERVACIONES: que la pista esta mal hecha
+========================================
+Guarde este código para consultar el estado.
